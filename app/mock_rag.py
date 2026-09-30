@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 
 from .incidents import STATE
+from .tracing import observe
 
 CORPUS = {
     "refund": ["Refunds are available within 7 days with proof of purchase."],
@@ -11,6 +12,7 @@ CORPUS = {
 }
 
 
+@observe(name="retrieval", capture_input=False, capture_output=False)
 def retrieve(message: str) -> list[str]:
     if STATE["tool_fail"]:
         raise RuntimeError("Vector store timeout")
@@ -21,3 +23,4 @@ def retrieve(message: str) -> list[str]:
         if key in lowered:
             return docs
     return ["No domain document matched. Use general fallback answer."]
+
